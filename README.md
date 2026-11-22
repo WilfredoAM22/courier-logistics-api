@@ -1,25 +1,24 @@
 # API de Mensajería y Logística (Courier & Logistics API)
 
-API de cotización y rastreo logístico para couriers en la ruta **Miami (MIA) -> República Dominicana (SDQ/STI)** con reglas aduanales de la **Dirección General de Aduanas (DGA)**: exención hasta **US\$ 200.00** y cálculo tributario en cascada (arancel, impuesto selectivo al consumo e ITBIS) con precisión financiera mediante `BigDecimal`.
+API RESTful en Java 21 y Spring Boot para cotización aduanal (DGA) y rastreo logístico en la ruta **Miami (MIA) -> República Dominicana (SDQ/STI)**.
 
----
+## Stack Tecnológico
+* **Lenguaje:** Java 21 | **Framework:** Spring Boot 4.1.2 | **Persistencia:** Hibernate 7, H2 | **Pruebas:** JUnit 5
 
-### Instalación y Ejecución
+## Instalación y Ejecución
+```bash
+git clone https://github.com
+cd courier-logistics-api
+./mvnw clean compile
+./mvnw test
+export DB_PASSWORD=BUTTERCOOKIES
+./mvnw spring-boot:run
+```
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com
-   cd courier-logistics-api
-   ```
+## Endpoints Principales (`curl`)
+* **Cotizador Aduanal (`POST /api/v1/quotes`):** Soporta cálculo para paquetes exentos ($\le 200$ USD FOB) y gravados en cascada (Arancel, ISC e ITBIS).
+* **Gestión de Envíos (`/api/v1/shipments`):** Registro de paquetes en Miami, consulta por número de tracking y actualización de estados logísticos.
 
-2. **Compilar el proyecto:**
-   ```bash
-   ./mvnw clean compile
-   ```
-
-3. **Ejecutar la aplicación:**
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-
----
+## Evidencias
+* **Compilación:** `docs/images/build-success.png`
+* **Pruebas:** `docs/images/junit-tests.png`

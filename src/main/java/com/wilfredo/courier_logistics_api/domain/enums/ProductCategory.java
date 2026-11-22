@@ -21,11 +21,11 @@ public enum ProductCategory {
    }
 
    public BigDecimal getDutyRate(){
-       return this.getDutyRate();
+       return this.dutyRate;
    }
 
 
    public BigDecimal getSelectiveTaxRate(){
-       return  this.getSelectiveTaxRate();
+       return  this.selectiveTaxRate;
    }
 }

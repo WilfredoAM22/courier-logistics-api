@@ -2,7 +2,7 @@
 
 API RESTful en Java 21 y Spring Boot para cotización aduanal (DGA) y rastreo logístico en la ruta **Miami (MIA) -> República Dominicana (SDQ/STI)**.
 
-## Stack Tecnológico
+## Stack
 * **Lenguaje:** Java 21 | **Framework:** Spring Boot 4.1.2 | **Persistencia:** Hibernate 7, H2 | **Pruebas:** JUnit 5
 
 ## Instalación y Ejecución

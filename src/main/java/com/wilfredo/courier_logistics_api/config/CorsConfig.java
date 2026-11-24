@@ -1,3 +1,4 @@
+
 package com.wilfredo.courier_logistics_api.config;
 
 import org.springframework.context.annotation.Configuration;
@@ -6,6 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
@@ -13,7 +15,9 @@ public class CorsConfig implements WebMvcConfigurer {
                         "http://localhost:5173",
                         "http://localhost:5174",
                         "https://*.vercel.app",
-                        "https://alexismariano.dev"
+                        "https://alexismariano.dev",
+                        "https://www.alexismariano.dev",
+                        "https://courier.alexismariano.dev"
                 )
                 .allowedMethods("GET", "POST", "PATCH", "OPTIONS")
                 .allowedHeaders("*");

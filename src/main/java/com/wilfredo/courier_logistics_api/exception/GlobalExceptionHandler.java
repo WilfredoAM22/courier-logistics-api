@@ -20,29 +20,26 @@ public record ApiErrorResponse(
             Map<String, String> errors
     ){}
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorResponse> handleValidationExceptiions
-            (MethodArgumentNotValidException ex){
+    public ResponseEntity<ApiErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
                 .collect(Collectors.toMap(
                         FieldError::getField,
-                        error ->error.getDefaultMessage() != null ? error.getDefaultMessage():"Valor invalido",
-                        (existing, replacementt) -> existing
+                        error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "Valor inválido",
+                        (existing, replacement) -> existing
                 ));
         return ResponseEntity.badRequest()
-                .body(new ApiErrorResponse("validation_error","Error de validación en los datos enviados", fieldErrors));
-
+                .body(new ApiErrorResponse("validation_error", "Error de validación en los datos enviados", fieldErrors));
     }
 
-@ExceptionHandler(HttpMessageNotReadableException.class)
-public ResponseEntity<ApiErrorResponse> handleUnreadableMessage(HttpMessageNotReadableException ex) {
-    return ResponseEntity.badRequest()
-            .body(new ApiErrorResponse(
-                    "invalid_request",
-                    "Formato JSON inválido o valor de categoría/estado no soportado",
-                    Map.of()
-            ));
-}
-
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorResponse> handleUnreadableMessage(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ApiErrorResponse(
+                        "invalid_request",
+                        "Formato de solicitud inválido o categoría/estado no reconocido",
+                        Map.of()
+                ));
+    }
 @ExceptionHandler(ShipmentNotFoundException.class)
 public ResponseEntity<ApiErrorResponse> handleNotFound(ShipmentNotFoundException ex){
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiErrorResponse
@@ -54,4 +51,11 @@ public ResponseEntity<ApiErrorResponse> handleInvalidTransition(InvalidStatusTra
     return ResponseEntity.status(HttpStatus.CONFLICT).body
             (new ApiErrorResponse("conflict", ex.getMessage(), Map.of()));
 
-}}
+}
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ApiErrorResponse("invalid_request", ex.getMessage(), Map.of()));
+    }
+
+}

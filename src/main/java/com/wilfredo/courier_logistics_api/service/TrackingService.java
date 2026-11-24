@@ -82,10 +82,12 @@ public class TrackingService {
             Shipment shipment = shipmentRepository.findByTrackingNumberWithEvents(normalizedTracking)
                     .orElseThrow(() -> new ShipmentNotFoundException(normalizedTracking));
 
-            if (!shipment.getCurrentStatus().canTransitionTo(request.newStatus()))
+            if (!shipment.getCurrentStatus().canTransitionTo(request.newStatus())) {
                 throw new InvalidStatusTransitionException(
-                        "No Puedes cambiar de " + shipment.getCurrentStatus() + " a " + request.newStatus()
+                        "No puedes cambiar de \"" + shipment.getCurrentStatus().getDescription()
+                                + "\" a \"" + request.newStatus().getDescription() + "\"."
                 );
+            }
             shipment.setCurrentStatus(request.newStatus());
 
 

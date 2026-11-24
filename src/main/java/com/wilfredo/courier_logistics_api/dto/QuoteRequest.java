@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public record QuoteRequest(
         @NotNull(message = "El peso en libras es obligatorio")
-        @DecimalMin(value = "0.01", message = "El peso debe ser mayor a 0.00 lbs")
+        @DecimalMin(value = "0.01", message = "El peso debe ser de al menos 0.01 libras")
         BigDecimal weightInLbs,
 
         @NotNull(message = "El valor FOB es obligatorio" )

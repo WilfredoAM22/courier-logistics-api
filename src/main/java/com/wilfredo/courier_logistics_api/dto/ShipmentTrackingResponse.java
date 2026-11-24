@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record ShipmentTrackingResponse (
-       String TrackingNumber,
+       String trackingNumber,
        String description,
        BigDecimal weightInLbs,
        ProductCategory category,

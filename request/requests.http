@@ -1,0 +1,207 @@
+### 1. Cotización Aduanal DGA — Paquete Exento (<= 200 USD FOB)
+POST http://localhost:8080/api/v1/quotes
+Content-Type: application/json
+
+{
+  "weightInLbs": 2.5,
+  "fobValue": 180.00,
+  "category": "ELECTRONICS"
+}
+
+### 2. Cotización Aduanal DGA — Paquete Gravado en Cascada (> 200 USD FOB)
+POST http://localhost:8080/api/v1/quotes
+Content-Type: application/json
+
+{
+  "weightInLbs": 4.5,
+  "fobValue": 950.00,
+  "category": "ELECTRONICS"
+}
+
+### 3. Validación de Contrato (@Valid) — Error 400 Bad Request (Peso o valor negativo)
+POST http://localhost:8080/api/v1/quotes
+Content-Type: application/json
+
+{
+  "weightInLbs": -1.0,
+  "fobValue": 0.00,
+  "category": "CLOTHING"
+}
+
+### 4. Registrar Nuevo Paquete en Almacén de Miami (Genera tracking DOM-MIA-XXXXXX)
+POST http://localhost:8080/api/v1/shipments
+Content-Type: application/json
+
+{
+  "description": "Laptop MacBook Air M3",
+  "weightInLbs": 4.5,
+  "fobValue": 950.00,
+  "category": "ELECTRONICS",
+  "originLocation": "Almacén Doral, Miami, FL"
+}
+
+### 5. Consultar Envío y su Línea de Tiempo por Tracking (Reemplaza el código generado)
+GET http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX
+
+### 6. Avanzar Estado Logístico — Transición Válida (RECEIVED_MIAMI -> IN_TRANSIT)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "IN_TRANSIT",
+  "location": "Vuelo de carga MIA -> SDQ",
+  "notes": "Paquete embarcado hacia Santo Domingo"
+}
+
+### 7. Máquina de Estados — Error 409 Conflict (Salto ilegal directo a DELIVERED)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "DELIVERED",
+  "location": "Sucursal La Romana",
+  "notes": "Intento de entrega sin pasar por aduanas"
+}
+
+### 8. Consulta de Tracking Inexistente — Error 404 Not Found
+GET http://localhost:8080/api/v1/shipments/DOM-MIA-000000
+### 9. Cotización DGA — Categoría Especial Exenta (Libros / Cultura)
+POST http://localhost:8080/api/v1/quotes
+Content-Type: application/json
+
+{
+  "weightInLbs": 3.0,
+  "fobValue": 320.00,
+  "category": "BOOKS"
+}
+
+### 10. Cotización DGA — Producto con Impuesto Selectivo al Consumo (Suplementos > 200 USD)
+POST http://localhost:8080/api/v1/quotes
+Content-Type: application/json
+
+{
+  "weightInLbs": 5.2,
+  "fobValue": 260.00,
+  "category": "SUPPLEMENTS"
+}
+
+### 11. Registrar Segundo Paquete (Exento <= 200 USD para probar retiro en La Romana)
+POST http://localhost:8080/api/v1/shipments
+Content-Type: application/json
+
+{
+  "description": "Zapatillas Deportivas Running",
+  "weightInLbs": 2.2,
+  "fobValue": 125.00,
+  "category": "CLOTHING",
+  "originLocation": "Almacén Doral, Miami, FL"
+}
+
+### 12. Ciclo Completo — Paso 2: Ingreso a Aduanas DGA (IN_TRANSIT -> CUSTOMS_CLEARANCE)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "CUSTOMS_CLEARANCE",
+  "location": "Terminal de Carga AILA (SDQ)",
+  "notes": "Manifiesto presentado ante Dirección General de Aduanas"
+}
+
+### 13. Ciclo Completo — Paso 3: Disponible en Sucursal Local (CUSTOMS_CLEARANCE -> READY_FOR_PICKUP)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "READY_FOR_PICKUP",
+  "location": "Sucursal La Romana — Av. Santa Rosa",
+  "notes": "Paquete clasificado y listo para retiro en mostrador"
+}
+
+### 14. Ciclo Completo — Paso 4: Entrega Final al Cliente (READY_FOR_PICKUP -> DELIVERED)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "DELIVERED",
+  "location": "Sucursal La Romana — Av. Santa Rosa",
+  "notes": "Entregado con firma y cédula verificada"
+}
+
+### 15. Máquina de Estados — Error 409 Conflict (Intentar modificar un paquete ya DELIVERED)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "CANCELLED",
+  "location": "Sucursal La Romana",
+  "notes": "Intento de cancelación posterior a entrega"
+}
+
+### 16. Validación de Contrato — Categoría o Enum Inválido (Error 400 Bad Request)
+POST http://localhost:8080/api/v1/quotes
+Content-Type: application/json
+
+{
+  "weightInLbs": 2.0,
+  "fobValue": 100.00,
+  "category": "VEHICLES"
+}
+### 17. Verificación de Ruta y Verbo — Error 405 Method Not Allowed (PATCH sin /status)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX
+Content-Type: application/json
+
+{
+  "newStatus": "IN_TRANSIT",
+  "location": "Vuelo MIA -> SDQ"
+}
+
+### 18. Cancelación Administrativa antes de Salida (RECEIVED_MIAMI -> CANCELLED)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "CANCELLED",
+  "location": "Almacén Doral, Miami, FL",
+  "notes": "Cancelado a solicitud del cliente antes del embarque aéreo"
+}
+### 19. Cancelación Válida con el Enum Exacto del Backend ("CANCELED" con una L)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "CANCELED",
+  "location": "Almacén Doral, Miami, FL",
+  "notes": "Cancelado a solicitud del cliente antes de abordar vuelo"
+}
+
+### 20. Máquina de Estados — Error 409 Conflict (Intentar mover un paquete ya CANCELED)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "READY_FOR_PICKUP",
+  "location": "Sucursal La Romana",
+  "notes": "Intento de reactivación de paquete cancelado"
+}
+### Prueba A — Ortografía con doble LL ("CANCELLED" -> Error 400 Bad Request por enum desconocido)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "CANCELLED",
+  "location": "Almacén Doral, Miami, FL",
+  "notes": "Prueba con doble LL para verificar rechazo de deserialización"
+}
+
+### Prueba B — Ortografía exacta del enum Java ("CANCELED" -> 200 OK si está activo, o 409 Conflict si ya cerró)
+PATCH http://localhost:8080/api/v1/shipments/DOM-MIA-XXXXXX/status
+Content-Type: application/json
+
+{
+  "newStatus": "CANCELED",
+  "location": "Almacén Doral, Miami, FL",
+  "notes": "Cancelación oficial con el nombre exacto del enum"
+}
+
+
+
